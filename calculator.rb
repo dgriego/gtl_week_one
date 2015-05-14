@@ -11,7 +11,7 @@ def is_valid_expression?(expression)
     \d+\.?\d*$  # any number that contains only one decimal
   /x
 
-  (expresion =~ regexp) == nil ? false : true
+  (expression =~ regexp) == nil ? false : true
 end
 
 def display_intro_msg
@@ -41,8 +41,7 @@ def get_user_expression
   input = gets.chomp
 end
 
-error_message = "ERROR: not a valid expression, must include" \
-                " spaces before and after operator!" \
+error_message = "ERROR: not a valid expression, please follow this format:" \
                 "\n   e.g(1 + 5 or 2 / 5)\n\n"
 
 display_intro_msg
