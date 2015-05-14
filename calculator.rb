@@ -1,19 +1,17 @@
-ERROR_MSG = "ERROR: not a valid expression, must include" \
-            " spaces before and after operator!" \
-            "\n   e.g(1 + 5 or 2 / 5)\n\n"
+#
+# Simple Calculator
+#
 
-class String
-  def is_valid_expression?
-    regexp = /
-      \A\d+\.?\d* # any number that contains only one decimal
-      \s+         # white space after first number and before operand
-      [\+\/\-\*]  # matches available operands
-      \s+         # white space after first number and before operand
-      \d+\.?\d*$  # any number that contains only one decimal
-    /x
+def is_valid_expression?(expression)
+  regexp = /
+    \A\d+\.?\d* # any number that contains only one decimal
+    \s+         # white space after first number and before operand
+    [\+\/\-\*]  # matches available operands
+    \s+         # white space after first number and before operand
+    \d+\.?\d*$  # any number that contains only one decimal
+  /x
 
-    return (self =~ regexp) == nil ? false : true
-  end
+  (expresion =~ regexp) == nil ? false : true
 end
 
 def display_intro_msg
@@ -43,13 +41,16 @@ def get_user_expression
   input = gets.chomp
 end
 
+error_message = "ERROR: not a valid expression, must include" \
+                " spaces before and after operator!" \
+                "\n   e.g(1 + 5 or 2 / 5)\n\n"
+
 display_intro_msg
 loop do
   expression = get_user_expression
-  case expression.is_valid_expression?
-  when true then calculate(expression)
+  if is_valid_expression?(expression)
+    calculate(expression)
   else
-    puts ERROR_MSG
-    next
+    puts error_message
   end
 end
