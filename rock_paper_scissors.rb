@@ -32,17 +32,15 @@ end
 loop do
   player_choice = ''
 
-  # Player makes a choice
   loop do
     puts "Please pick one: Rock(r) Paper(p) Scissors(s):"
     player_choice = gets.chomp.downcase
     break if CHOICES.include?(player_choice)
   end
 
-  # Computer makes a choice
   computer_choice = CHOICES.sample
   compare_choices(player_choice, computer_choice)
 
   puts "Would you like to play again? (y/n)"
-  break unless gets.chomp.downcase == ("y" || "yes")
+  break unless gets.chomp.downcase == "y"
 end
