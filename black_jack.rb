@@ -1,6 +1,7 @@
+# Constants
+BLACKJACK = 21
 
 # Helper Methods
-
 def initialize_deck
   cards = ['A', 'K', 'Q', 'J', '10', '9', '8', '7', '6', '5', '4', '2']
   suits = ['Hearts', 'Diamonds', 'Spades', 'Clubs']
@@ -18,26 +19,30 @@ def deal(quantity, hand, deck)
   end
 end
 
-def display_hand(hand, player)
+def display_hand(hand, player, start_of_game = false)
   puts "--------- #{player.upcase}'s Cards ------------"
 
-  hand.each do |e|
-    puts "=> #{e[0]} of #{e[1]}"
+  if start_of_game && player == "Dealer"
+    puts "=> #{hand[0][0]} of #{hand[0][1]}"
+  else
+    hand.each do |e|
+      puts "=> #{e[0]} of #{e[1]}"
+    end
   end
 end
 
 def calculate_total(hand) # [["D", "A"], ["S", "Q"]]
-  card_values = hand.flatten.map do |v|
-    v = "10" if v =~ /[JQK]/
-    v = "11" if v =~ /A/
-    v.to_i
-  end #["11", "3", "10"]
+  card_values = hand.flatten.map do |e|
+    e = "10" if e =~ /[JQK]/
+    e = "11" if e =~ /A/
+    e.to_i
+  end # [11, 10, 3]
 
   total = card_values.inject(:+)
 
   # Correct for aces
   hand.flatten.select { |e| e == "A" }.count.times do
-    total -= 10 if total > 21
+    total -= 10 if total > BLACKJACK
   end
 
   total
@@ -57,6 +62,8 @@ players_name = prompt_for_name
 puts ""
 
 while play == "y"
+  system("clear")
+
   # Deal Cards
   deck = initialize_deck
   deck.shuffle!
@@ -75,22 +82,23 @@ while play == "y"
   player_total = calculate_total(players_hand)
   display_total(player_total)
 
-  display_hand(dealers_hand, 'Dealer')
+  display_hand(dealers_hand, "Dealer", true)
   dealer_total = calculate_total(dealers_hand)
-  display_total(dealer_total)
 
   # Check for blackjack
-  if player_total == 21
+  if player_total == BLACKJACK
     puts "#{players_name} hit blackjack! #{players_name} wins!"
     next
-  elsif dealer_total == 21
+  elsif dealer_total == BLACKJACK
+    display_total(dealer_total)
     puts "Sorry #{players_name}, dealer hit blackjack! You lose."
     next
   end
 
   # Player turn
+  puts ""
   puts "#{players_name}, it's your turn"
-  while player_total < 21
+  while player_total < BLACKJACK
     puts "Would you like to 1) Hit or 2) Stay?"
     hit_or_stay = gets.chomp
 
@@ -104,16 +112,19 @@ while play == "y"
       break
     end
 
+    system("clear")
     deal(1, players_hand, deck)
     display_hand(players_hand, players_name)
     player_total = calculate_total(players_hand)
     display_total(player_total)
+    display_hand(dealers_hand, "Dealer", true)
+    puts ""
 
-    if player_total == 21
+    if player_total == BLACKJACK
       blackjack = true
       puts "#{players_name} hit blackjack! #{players_name} wins!"
       next
-    elsif player_total > 21
+    elsif player_total > BLACKJACK
       bust = true
       puts "Sorry #{players_name}, it looks like you busted!"
       next
@@ -123,18 +134,23 @@ while play == "y"
   if !blackjack && !bust
     # Dealer Turn
     while dealer_total < 17
-      #hit
+      system("clear")
+
+      # Hit
       puts "Dealer hits..."
+      puts ""
       deal(1, dealers_hand, deck)
+      display_hand(players_hand, players_name)
+      display_total(player_total)
       display_hand(dealers_hand, "Dealer")
       dealer_total = calculate_total(dealers_hand)
       display_total(dealer_total)
 
-      if dealer_total == 21
+      if dealer_total == BLACKJACK
         blackjack = true
         puts "Sorry #{players_name}, dealer hit blackjack! You lose."
         next
-      elsif dealer_total > 21
+      elsif dealer_total > BLACKJACK
         bust = true
         puts "Congratulations, dealer busted! #{players_name} Wins!"
         next
@@ -143,8 +159,8 @@ while play == "y"
   end
 
   if !blackjack && !bust
-    # Compare Hands
     system("clear")
+    # Compare Hands
     display_hand(players_hand, players_name)
     display_total(player_total)
     display_hand(dealers_hand, "Dealer")
